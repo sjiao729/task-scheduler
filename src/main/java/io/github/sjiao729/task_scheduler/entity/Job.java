@@ -1,0 +1,62 @@
+package io.github.sjiao729.task_scheduler;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.Instant;
+import java.util.UUID;
+
+public enum JobStatus
+{
+    PENDING, RUNNING, DONE, FAILED
+}
+
+@Entity
+@Table(name = "jobs")
+@Data
+@NoArgsConstructor
+/**
+ * Entity that represents a new job available to be picked up
+ */
+public class Job
+{
+    // Job ID
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;   
+
+    // Payload
+    @Column(nullable = false, columnDefinition = "TEXT")
+    prviate String payload;
+
+    // Job status
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private JobStatus status = JobStatus.PENDING;
+
+    // Number of times retired
+    @Column(name = "retry_count", nullable = false)
+    private int retryCount = 0;
+
+    // Time created at
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    // Last updated at
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
+    @PrePresistent
+    protected void onCreate()
+    {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate()
+    {
+        updatedAt = Instant.now();
+    }
+
+}
