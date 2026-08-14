@@ -21,6 +21,7 @@ public class JobResponse
     /**
      * Constructs a JobResponse from the given job
      * @param job the job to construct JobResponse from
+     * @return returns the created dto
      */
     public static JobResponse fromEntity(Job job)
     {
