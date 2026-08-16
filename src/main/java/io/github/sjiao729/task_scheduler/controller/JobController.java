@@ -39,7 +39,8 @@ public class JobController
      * @return returns a reponse entity with the OK status and the body of the job to be retrieved
      */
     @GetMapping("/{id}")
-    public ResponseEntity<JobResponse> getJob(@PathVariable UUID id) {
+    public ResponseEntity<JobResponse> getJob(@PathVariable UUID id) 
+    {
         return ResponseEntity.ok(jobService.getJob(id));
     }
     
