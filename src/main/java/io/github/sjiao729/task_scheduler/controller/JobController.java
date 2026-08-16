@@ -2,9 +2,6 @@ package io.github.sjiao729.taskscheduler;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import io.github.sjiao729.taskscheduler.entity.JobStatus;
 import io.github.sjiao729.taskscheduler.controller.dtos.JobRequest;
 import io.github.sjiao729.taskscheduler.controller.dtos.JobResponse;
@@ -44,5 +41,28 @@ public class JobController
     @GetMapping("/{id}")
     public ResponseEntity<JobResponse> getJob(@PathVariable UUID id) {
         return ResponseEntity.ok(jobService.getJob(id));
+    }
+    
+    /**
+     * Returns a list of all jobs with the specified status, if specified
+     * @param status looks for all jobs with this status
+     * @return a list of all applicable jobs
+     */
+    @GetMapping
+    public ResponseEntity<List<JobResponse>> listJobs( @RequestParam(required = false) JobStatus status )
+    {
+        return ResponseEntity.ok(jobService.listJobs(status));
+    }
+
+    /**
+     * Cancels a job listing
+     * @param id the id of the job to be canceled
+     * @return 204 No Content with an empty body
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelJob( @PathVariable UUID id )
+    {
+        jobService.cancelJob(id);
+        return ResponseEntity.noContent().build();
     }
 }
