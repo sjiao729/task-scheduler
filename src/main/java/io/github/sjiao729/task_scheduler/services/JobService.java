@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class JobService
@@ -36,13 +37,43 @@ public class JobService
         return JobResponse.fromEntity( saved );   
     }
 
-    // get
+    /**
+     * Attempts to find and return a job with the given id
+     * @param id the id of the job to find
+     * @return a JobResponse for the job, if found
+     */
     public JobResponse getJob( UUID id )
     {
-        
+        Job target = jobRepository.findByIt( id )
+                .orElseThrow( () -> new JobNotFoundException(id) );
+        return JobResponse.fromEntity( target );
     }
 
-    // list
+    /**
+     * Lists all jobs with the given status, if specified
+     * @param status the method looks for jobs with this status, or all jobs if 
+     * not specified
+     * @return a list of JobResponses that was found by this method
+     */
+    public List<JobResponse> listJobs( JobStatus status )
+    {
+        List<Job> list = ( status == null ) ? 
+            jobRepository.findAll() : jobRepository.findByStatus( status );
+        List<JobResponse> results = list.stream()
+                .map( JobResponse::fromEntity )
+                .collect(Collectors.toList());
+        return results;
+    }
 
-    // cancel
+    /**
+     * Cancels the job with the given id
+     * @param id the id of the job to be cancelled
+     */
+    public void cancelJob( UUID id )
+    {
+        Job job = jobRepository.findById( id )
+                .orElseThrow( () -> JobNotFoundException(id) );
+        job.setStatus(JobStatus.FAILED);
+        jobRepository.save( job );
+    }
 }
