@@ -44,7 +44,7 @@ public class JobService
      */
     public JobResponse getJob( UUID id )
     {
-        Job target = jobRepository.findByIt( id )
+        Job target = jobRepository.findById( id )
                 .orElseThrow( () -> new JobNotFoundException(id) );
         return JobResponse.fromEntity( target );
     }

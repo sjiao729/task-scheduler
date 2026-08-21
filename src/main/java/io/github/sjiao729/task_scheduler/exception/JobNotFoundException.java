@@ -1,6 +1,6 @@
 package io.github.sjiao729.taskscheduler.exception;
 
-public class JobNotFoundException extend RuntimeException
+public class JobNotFoundException extends RuntimeException
 {
     public JobNotFoundException()
     {
