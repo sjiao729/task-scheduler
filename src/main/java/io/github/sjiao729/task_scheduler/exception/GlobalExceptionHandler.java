@@ -14,7 +14,8 @@ import java.util.Map;
 public class GlobalExcpetionHandler
 {
     /**
-     * When a JobNotFoundException is thrown, return a body with code 404 not found
+     * When a JobNotFoundException is thrown, return a body with code 404 not 
+     * found
      */
     @ExceptionHandler(JobNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleJobNotFound( JobNotFoundException ex )
@@ -28,9 +29,25 @@ public class GlobalExcpetionHandler
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    /**
+     * When an invalid argument is used, return a 400 bad request along with 
+     * details on which fields are invalid
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors( MethodArgumentNotValidException ex )
     {
+        Map<String, Object> body = new HashMap<>();
+        body.put( "timestamp", Instant.now() );
+        body.put( "status", HttpStatus.BAD_REQUEST.value() );
+        body.put( "error", "Bad Request" );
         
+        Map<String, String> fieldErrors = new HashMap<>();
+        // Displays each invalid field
+        ex.getBindingResult().getFieldErrors()
+                .forEach(fieldError -> fieldErrors.put(fieldError.getField(), 
+                fieldError.getDefaultMessage()));
+        body.put("fieldErrors", fieldErrors);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 }
