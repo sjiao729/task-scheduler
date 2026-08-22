@@ -1,4 +1,4 @@
-package io.github.sjiao729.taskscheduler;
+package io.github.sjiao729.taskscheduler.dtos;
 
 import io.github.sjiao729.taskscheduler.entity.Job;
 import io.github.sjiao729.taskscheduler.entity.JobStatus;

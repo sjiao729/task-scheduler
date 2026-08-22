@@ -1,4 +1,4 @@
-package io.github.sjiao729.taskscheduler;
+package io.github.sjiao729.taskscheduler.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class Job
 
     // Payload
     @Column(nullable = false, columnDefinition = "TEXT")
-    prviate String payload;
+    private String payload;
 
     // Job status
     @Enumerated(EnumType.STRING)
@@ -41,7 +41,7 @@ public class Job
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @PrePresistent
+    @PrePersist
     protected void onCreate()
     {
         createdAt = Instant.now();

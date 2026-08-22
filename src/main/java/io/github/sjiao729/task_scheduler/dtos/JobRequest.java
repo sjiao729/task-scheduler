@@ -1,4 +1,4 @@
-package io.github.sjiao729.taskscheduler;
+package io.github.sjiao729.taskscheduler.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 

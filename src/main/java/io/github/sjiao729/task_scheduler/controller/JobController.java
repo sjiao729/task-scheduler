@@ -1,14 +1,20 @@
-package io.github.sjiao729.taskscheduler;
+package io.github.sjiao729.taskscheduler.controller;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.github.sjiao729.taskscheduler.entity.JobStatus;
-import io.github.sjiao729.taskscheduler.controller.dtos.JobRequest;
-import io.github.sjiao729.taskscheduler.controller.dtos.JobResponse;
+import io.github.sjiao729.taskscheduler.entity.Job;
+import io.github.sjiao729.taskscheduler.service.JobService;
+import io.github.sjiao729.taskscheduler.entity.JobStatus;
+import io.github.sjiao729.taskscheduler.dtos.JobRequest;
+import io.github.sjiao729.taskscheduler.dtos.JobResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobs")

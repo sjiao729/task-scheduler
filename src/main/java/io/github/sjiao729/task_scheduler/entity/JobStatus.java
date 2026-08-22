@@ -1,4 +1,4 @@
-package io.github.sjiao729.taskscheduler;
+package io.github.sjiao729.taskscheduler.entity;
 
 public enum JobStatus
 {

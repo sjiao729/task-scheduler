@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExcpetionHandler
+public class GlobalExceptionHandler
 {
     /**
      * When a JobNotFoundException is thrown, return a body with code 404 not 

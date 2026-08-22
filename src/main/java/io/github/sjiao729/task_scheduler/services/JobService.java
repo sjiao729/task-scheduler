@@ -2,8 +2,8 @@ package io.github.sjiao729.taskscheduler.service;
 
 import io.github.sjiao729.taskscheduler.entity.JobStatus;
 import io.github.sjiao729.taskscheduler.entity.Job;
-import io.github.sjiao729.taskscheduler.controller.dtos.JobRequest;
-import io.github.sjiao729.taskscheduler.controller.dtos.JobResponse;
+import io.github.sjiao729.taskscheduler.dtos.JobRequest;
+import io.github.sjiao729.taskscheduler.dtos.JobResponse;
 import io.github.sjiao729.taskscheduler.repository.JobRepository;
 import io.github.sjiao729.taskscheduler.exception.JobNotFoundException;
 import org.springframework.stereotype.Service;
@@ -72,7 +72,7 @@ public class JobService
     public void cancelJob( UUID id )
     {
         Job job = jobRepository.findById( id )
-                .orElseThrow( () -> JobNotFoundException(id) );
+                .orElseThrow( () -> new JobNotFoundException(id) );
         job.setStatus(JobStatus.FAILED);
         jobRepository.save( job );
     }
