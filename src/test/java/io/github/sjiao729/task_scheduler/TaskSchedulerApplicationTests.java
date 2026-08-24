@@ -1,4 +1,4 @@
-package io.github.sjiao729.task_scheduler;
+package io.github.sjiao729.taskscheduler;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
