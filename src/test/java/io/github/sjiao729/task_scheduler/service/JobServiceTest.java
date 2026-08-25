@@ -16,6 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,6 +35,8 @@ class JobServiceTest
     private JobService jobService;
 
     private Job existingJob;
+    private Job existingJob2;
+    private List<Job> jobList;
 
     @BeforeEach
     void setUp()
@@ -41,6 +45,13 @@ class JobServiceTest
         existingJob.setId( UUID.randomUUID() );
         existingJob.setPayload( "send email" );
         existingJob.setStatus( JobStatus.PENDING );
+
+        existingJob2 = new Job();
+        existingJob2.setId( UUID.randomUUID() );
+        existingJob2.setPayload( "update database" );
+        existingJob2.setStatus( JobStatus.RUNNING );
+
+        jobList = new ArrayList<>();
     }
 
     /**
@@ -76,6 +87,9 @@ class JobServiceTest
         assertThat( response.getId() ).isEqualTo( existingJob.getId() );
     }
 
+    /**
+     * Tests that when a job is missing, throws a JobNotFoundException.
+     */
     @Test
     void testGetJob_throwsExceptionWhenMissing()
     {
@@ -87,5 +101,37 @@ class JobServiceTest
             .isInstanceOf(JobNotFoundException.class)
             .hasMessageContaining( fakeId.toString() );
 
+    }
+
+    /**
+     * Tests that calling listJobs with no specified status return all jobs.
+     */
+    @Test
+    void testListJobs_noStatus()
+    {
+        jobList.add( existingJob );
+        jobList.add( existingJob2 );
+
+        when( jobRepository.findAll() ).thenReturn( jobList );
+
+        List<JobResponse> response = jobService.listJobs( null );
+
+        assertThat( response.size() ).isEqualTo( 2 );
+    }
+
+    /**
+     * Tests that calling listJobs with specified status return matching jobs.
+     */
+    @Test
+    void testListJobs_withStatus()
+    {
+        jobList.add( existingJob2 );
+
+        when( jobRepository.findByStatus( JobStatus.RUNNING ) ).thenReturn( jobList );
+
+        List<JobResponse> response = jobService.listJobs( JobStatus.RUNNING );
+
+        assertThat( response.size() ).isEqualTo( 1 );
+        assertThat( response.get( 0 ).getId() ).isEqualTo( existingJob2.getId() );
     }
 }
