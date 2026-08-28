@@ -101,6 +101,9 @@ class JobControllerIntegrationTest
             .andExpect( jsonPath("$.message").value( containsString( "cannot be found" ) ) );
     }
 
+    /**
+     * Tests that listJobs lists all submitted jobs
+     */
     @Test
     void testListJobs() throws Exception
     {
