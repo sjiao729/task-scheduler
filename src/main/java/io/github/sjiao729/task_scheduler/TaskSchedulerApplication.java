@@ -10,7 +10,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class TaskSchedulerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TaskSchedulerApplication.class, args);
+		try
+		{
+			SpringApplication.run(TaskSchedulerApplication.class, args);
+		}
+		catch( Throwable ex )
+		{
+			ex.printStackTrace();
+		}
 	}
 
 }

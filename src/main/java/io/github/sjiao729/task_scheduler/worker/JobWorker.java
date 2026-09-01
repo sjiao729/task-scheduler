@@ -30,7 +30,7 @@ public class JobWorker
     @Scheduled( fixedDelay = 5000 )
     public void pollAndProcessJobs()
     {
-        List<Jobs> pendingJobs = jobRepository.findByStatusOrderByCreatedAtAsc( JobStatus.PENDING );
+        List<Job> pendingJobs = jobRepository.findByStatusOrderByCreatedAtAsc( JobStatus.PENDING );
 
         if( pendingJobs.isEmpty() )
         {
