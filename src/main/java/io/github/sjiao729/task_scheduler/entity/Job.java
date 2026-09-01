@@ -29,9 +29,17 @@ public class Job
     @Column(nullable = false)
     private JobStatus status = JobStatus.PENDING;
 
-    // Number of times retired
+    // Number of times retried
     @Column(name = "retry_count", nullable = false)
     private int retryCount = 0;
+
+    // Maximum number of retires allowed
+    @Column(name = "max_retries", nullable = false)
+    private int maxRetries = 3;
+
+    // Delay before next retry
+    @Column(name = "next_attempt_at")
+    private Instant nextAttemptAt;
 
     // Time created at
     @Column(name = "created_at", nullable = false, updatable = false)
