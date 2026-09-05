@@ -22,7 +22,7 @@ public interface JobRepository extends JpaRepository<Job, UUID>
 
     /**
      * Finds jobs with the specified status which are scheduled for retry 
-     * already, in FIFO order
+     * already, or brand new, in FIFO order
      * @param status the status of the jobs to search for
      * @param now the current time, to determine if a job is already scheduled
      */

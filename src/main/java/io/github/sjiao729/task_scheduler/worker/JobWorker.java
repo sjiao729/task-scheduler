@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
+import java.time.Instant;
 
 @Component
 public class JobWorker
@@ -17,6 +18,7 @@ public class JobWorker
     private static final Logger log = LoggerFactory.getLogger(JobWorker.class);
     private final JobRepository jobRepository;
     private final Random random = new Random();
+    private final long BASE_DELAY = 10;
 
     public JobWorker(JobRepository jobRepository) 
     {
@@ -24,13 +26,13 @@ public class JobWorker
     }
 
     /**
-     * Finds and list all pending jobs in jobRepository by order created, then
+     * Finds and list all eligible jobs in jobRepository by order created, then
      * processes them
      */
     @Scheduled( fixedDelay = 5000 )
     public void pollAndProcessJobs()
     {
-        List<Job> pendingJobs = jobRepository.findByStatusOrderByCreatedAtAsc( JobStatus.PENDING );
+        List<Job> eligibleJobs = jobRepository.findEligibleJobs( JobStatus.PENDING, Instant.now() );
 
         if( pendingJobs.isEmpty() )
         {
@@ -40,7 +42,7 @@ public class JobWorker
 
         log.info( "Found {} pending job(s) to process.", pendingJobs.size() );
 
-        for( Job job : pendingJobs )
+        for( Job job : eligibleJobs )
         {
             processJob( job );
         }
@@ -68,8 +70,7 @@ public class JobWorker
             }
             else
             {
-                job.setStatus( JobStatus.FAILED );
-                log.warn( "Job with ID {} failed.", job.getId() );
+                handleFailure( job );
             }
         }
         catch( InterruptedException e )
@@ -80,5 +81,27 @@ public class JobWorker
         }
 
         jobRepository.save( job );
+    }
+
+    /**
+     * Adds exponential delay and requeues job for retry if the maximnum retry
+     * attempts haven't been exceeded
+     * @param job the job which was failed
+     */
+    private void handleFailure( Job job )
+    {
+        int currAttempts = job.getRetryCount() + 1;
+        if( currAttempts >= job.getMaxRetries() )
+        {
+            job.setStatus( JobStatus.FAILED );
+            log.warn( "Job with ID {} failed permanently after {} attempts.", 
+                job.getId(), currAttempts );
+            return;
+        }
+
+        long delay = BASE_DELAY * (long)(Math.pow( 2, job.getRetryCount() ));
+        job.setRetryCount( currAttempts );
+        job.setStatus( JobStatus.PENDING );
+        job.setNextAttemptAt( (Instant.now()).plusSeconds(delay) );
     }
 }
